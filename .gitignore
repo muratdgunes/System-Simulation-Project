@@ -1,0 +1,8 @@
+out/
+results/
+*.o
+*.exe
+Makefile
+*_m.cc
+*_m.h
+.metadata/
