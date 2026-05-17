@@ -1,5 +1,4 @@
 out/
-results/
 *.o
 *.exe
 Makefile
