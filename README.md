@@ -12,7 +12,7 @@ To run these simulations, your OMNeT++ environment must have the following frame
 2. Open the OMNeT++ IDE and select **File -> Import -> Existing Projects into Workspace** to import this folder.
 3. Ensure the project is properly referencing your local INET 4.4 and Flora installations.
 4. Copy the custom `LoRa` and `LoRaApp` folders from this repository's `src/` directory into your active Flora framework `src/` directory.
-5. Copy the baseline `.ini` file into the `flora/simulations/examples/` directory.
+5. Copy the baseline `n100-gw1.ini` file into the `flora/simulations/examples/` directory.
 
 ---
 
@@ -24,7 +24,7 @@ This project is divided into specialized test cases. If you want to simulate the
 This scenario tests how the network handles a massive spike in packet processing time at the server level.
 
 1. Locate the `emergency.txt` file in this repository.
-2. Copy its contents and overwrite your active `.ini` file.
+2. Copy its contents and overwrite your active `n100-gw1.ini` file.
 3. Open the C++ source code handling the server processing timer. 
 4. Locate the following line in `PacketForwarder.cc` located in  flora/src/LoRa (which defaults to a 0.5-second processing delay):
    ```cpp
@@ -39,10 +39,10 @@ This scenario evaluates network congestion and packet delivery under increased n
 
 Locate the sensorincrease.txt file in this repository.
 
-Copy its contents and overwrite your active .ini file.
+Copy its contents and overwrite your active `n100-gw1.ini` file.
 
-Run the .ini file.
+Run the `n100-gw1.ini` file.
 
 ⚠️ Developer Note Regarding Simulation Scale: > The initial project proposal promised testing this scenario using 100 sensors across 20 distinct simulation runs. However, during initial testing, the computational overhead was too immense, resulting in 40 minutes of real-time execution per single simulation run. To make the experiment feasible while still generating valid congestion data, the parameters were carefully scaled down to 40 sensors across 3 runs.
 
-⚠️ Additionally, make sure you have enough space in your computer because each simulation run produces a .vec file which can go up to 800 MB of data. In default 20 smiulations were done, so if you are short on space make sure you decrease simulation runs (repeat = 3 or some other low number) or search for "vector-recording = true" statements and change them to "vector-recording = false".
+⚠️ Additionally, make sure you have enough space in your computer because each simulation run produces a .vec file which can go up to 800 MB of data. In default 20 smiulations were done, so if you are short on space make sure you decrease simulation runs (repeat = 3 or some other low number) or search for "vector-recording = true" statements and change them to "vector-recording = false". Both of these parametes can be found in `n100-gw1.ini` file in flora/simulations/examples/ path.
