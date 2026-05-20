@@ -43,6 +43,6 @@ Copy its contents and overwrite your active `n100-gw1.ini` file.
 
 Run the `n100-gw1.ini` file.
 
-⚠️ Developer Note Regarding Simulation Scale: > The initial project proposal promised testing this scenario using 100 sensors across 20 distinct simulation runs. However, during initial testing, the computational overhead was too immense, resulting in 40 minutes of real-time execution per single simulation run. To make the experiment feasible while still generating valid congestion data, the parameters were carefully scaled down to 40 sensors across 3 runs.
+⚠️ Developer Note Regarding Simulation Scale: > The initial project proposal promised testing this scenario using 100 sensors across 20 distinct simulation runs. However, during initial testing, the computational overhead was too immense, resulting in 100 minutes of real-time execution per single simulation run. To make the experiment feasible while still generating valid congestion data, the parameters were carefully scaled down to 40 sensors across 3 runs.
 
 ⚠️ Additionally, make sure you have enough space in your computer because each simulation run produces a .vec file which can go up to 800 MB of data. In default 20 smiulations were done, so if you are short on space make sure you decrease simulation runs (repeat = 3 or some other low number) or search for "vector-recording = true" statements and change them to "vector-recording = false". Both of these parametes can be found in `n100-gw1.ini` file in flora/simulations/examples/ path.
