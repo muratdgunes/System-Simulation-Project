@@ -1,5 +1,4 @@
-# System Simulation Project:  Smart Home Monitoring and Emer
-gency Alert System
+## System Simulation Project:  Smart Home Monitoring and Emergency Alert System
 
 This repository contains the OMNeT++ project files, C++ source code, NED topologies, and simulation results for analyzing LoRaWAN network scenarios.
 
