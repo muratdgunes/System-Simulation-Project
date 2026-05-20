@@ -34,7 +34,7 @@ Change it to simulate a severe processing bottleneck (20.0 seconds):
 scheduleAt(simTime() + 20.0, serviceTimer);
 Rebuild the project and run the .ini file.
 
-Scenario B: Sensor Increase (Network Load)
+### Scenario B: Sensor Increase (Network Load)
 This scenario evaluates network congestion and packet delivery under increased node density.
 
 Locate the sensorincrease.txt file in this repository.
