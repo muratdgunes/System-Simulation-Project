@@ -1,0 +1,156 @@
+[General]
+network = flora.simulations.LoRaNetworkTest
+output-vector-file = ../results/n100-gw1-s${runnumber}.ini.vec
+**.maxTransmissionDuration = 4s
+**.energyDetection = -110dBm
+
+#cmdenv-autoflush = true
+#cmdenv-status-frequency = 10000000s
+#cmdenv-express-mode = false
+#cmdenv-output-file = cmd_env_log.txt
+
+rng-class = "cMersenneTwister"
+**.loRaGW[*].numUdpApps = 1
+**.loRaGW[0].packetForwarder.localPort = 2000
+**.loRaGW[0].packetForwarder.destPort = 1000
+**.loRaGW[0].packetForwarder.destAddresses = "networkServer"
+**.loRaGW[0].packetForwarder.indexNumber = 0
+
+**.networkServer.numApps = 1
+**.networkServer.**.evaluateADRinServer = false
+**.networkServer.app[0].typename = "NetworkServerApp"
+**.networkServer.app[0].destAddresses = "loRaGW[0]"
+**.networkServer.app[0].destPort = 2000
+**.networkServer.app[0].localPort = 1000
+**.networkServer.app[0].adrMethod = ${"avg"}
+
+**.numberOfPacketsToSend = 0 #${numberOfPAckets = 200..5000 step 200} #100 #obviously 0 means infinite number of packets
+sim-time-limit = 3d
+warmup-period = 2h
+simtime-resolution = -11
+repeat = 3   # MAKE IT 20 BECAUSE WE STATED THAT WE WILL DO 20 DIFFERENT ONES.
+
+# --- 1. Humidity Sensors (Nodes 0 and 1) ---
+# Stagger the first packet between 0 and 60 minutes so they don't collide, 
+# then send subsequent packets exactly every 1 hour.
+#**.loRaNodes[{0..1}].app[0].timeToFirstPacket = uniform(0h, 1h)
+#**.loRaNodes[{0..1}].app[0].timeToNextPacket = 1h
+
+# --- 2. Smoke Alarms (Nodes 2 and 3) ---
+# TEMPORARY FOR VISUAL TESTING: Set to average 2 hours instead of 8760 hours 
+# so you can actually see them trigger during your 1-day simulation.
+#**.loRaNodes[{2..3}].app[0].timeToFirstPacket = exponential(24h)
+#**.loRaNodes[{2..3}].app[0].timeToNextPacket = exponential(24h)
+
+# --- 3. Door Sensors (Nodes 4 and 5) ---
+# Random interval averaging every 4 hours
+#**.loRaNodes[{4..5}].app[0].timeToFirstPacket = exponential(4h)
+#**.loRaNodes[{4..5}].app[0].timeToNextPacket = exponential(4h)
+**.alohaChannelModel = false
+
+#nodes features
+**.loRaNodes[*].**.initFromDisplayString = false
+**.loRaNodes[*].**.evaluateADRinNode = false
+**.loRaNodes[*].**initialLoRaBW = 125 kHz
+**.loRaNodes[*].**initialLoRaCR = 4
+**.loRaNodes[*].numApps = 1
+**.loRaNodes[*].app[0].typename = "SimpleLoRaApp"
+
+#gateway features
+**.LoRaGWNic.radio.iAmGateway = true
+**.loRaGW[*].**.initFromDisplayString = false
+
+#power consumption features
+**.loRaNodes[*].LoRaNic.radio.energyConsumer.typename = "LoRaEnergyConsumer"
+**.loRaNodes[*].**.energySourceModule = "^.IdealEpEnergyStorage"
+**.loRaNodes[*].LoRaNic.radio.energyConsumer.configFile = xmldoc("../energyConsumptionParameters.xml")
+
+#general features
+**.sigma = 3.57
+**.constraintAreaMinX = 0m
+**.constraintAreaMinY = 0m
+**.constraintAreaMinZ = 0m
+**.constraintAreaMaxZ = 0m
+
+LoRaNetworkTest.**.radio.separateTransmissionParts = false
+LoRaNetworkTest.**.radio.separateReceptionParts = false
+
+**.ipv4Delayer.config = xmldoc("../cloudDelays.xml")
+**.radio.radioMediumModule = "LoRaMedium"
+**.LoRaMedium.pathLossType = "LoRaLogNormalShadowing"
+#**.LoRaMedium.pathLossType = "LoRaPathLossOulu"
+**.minInterferenceTime = 0s
+**.displayAddresses = false
+
+# cache features
+# **.LoRaMedium.mediumLimitCacheType = "LoRaMediumCache"
+# **.LoRaMedium.rangeFilter = "communicationRange"
+# **.LoRaMedium.neighborCacheType = "LoRaNeighborCache"
+# **.LoRaMedium.neighborCache.range = 546m
+# **.LoRaMedium.neighborCache.refillPeriod = 3000s
+**.numberOfNodes = 6
+**.numberOfGateways = 1
+**.constraintAreaMaxX = 2376.0m
+**.constraintAreaMaxY = 1090.0m
+**.loRaGW[0].**.initialX = 544.00m
+**.loRaGW[0].**.initialY = 544.00m
+output-scalar-file = ../results/n100-gw1-s${runnumber}.ini.sca
+
+
+
+**.loRaNodes[0].**.initialX = 510.63m
+**.loRaNodes[0].**.initialY = 500.08m
+**.loRaNodes[1].**.initialX = 470.29m
+**.loRaNodes[1].**.initialY = 520.24m
+**.loRaNodes[2].**.initialX = 500.60m
+**.loRaNodes[2].**.initialY = 590.25m
+**.loRaNodes[3].**.initialX = 535.86m
+**.loRaNodes[3].**.initialY = 590.63m
+
+**.loRaNodes[*].app[0].timeToFirstPacket = uniform(0s, 10s)
+**.loRaNodes[*].app[0].timeToNextPacket = exponential(300s)
+**.loRaNodes[*].app[0].sendInterval = exponential(300s)
+
+# --- 2. EMERGENCY OVERRIDES (Nodes 2, 3, 4, 5) ---
+**.loRaNodes[{2..5}].app[0].timeToFirstPacket = uniform(0s, 2s)
+**.loRaNodes[{2..5}].app[0].timeToNextPacket = exponential(15s)
+**.loRaNodes[{2..5}].app[0].sendInterval = exponential(15s)
+
+**.loRaNodes[4].**.initialX = 650.85m
+**.loRaNodes[4].**.initialY = 510.11m
+**.loRaNodes[5].**.initialX = 680.27m
+**.loRaNodes[5].**.initialY = 520.84m
+
+**.loRaNodes[0].**initialLoRaSF = 8
+**.loRaNodes[0].**initialLoRaTP = 8dBm
+**.loRaNodes[1].**initialLoRaSF = 9
+**.loRaNodes[1].**initialLoRaTP = 8dBm
+**.loRaNodes[2].**initialLoRaSF = 7
+**.loRaNodes[2].**initialLoRaTP = 8dBm
+**.loRaNodes[3].**initialLoRaSF = 8   
+**.loRaNodes[3].**initialLoRaTP = 2dBm
+**.loRaNodes[4].**initialLoRaSF = 9
+**.loRaNodes[4].**initialLoRaTP = 8dBm
+**.loRaNodes[5].**initialLoRaSF = 10
+**.loRaNodes[5].**initialLoRaTP = 2dBm
+
+# 0.09s spike = SF7
+# 0.15s spike = SF8
+# 0.26s spike = SF9 other latencies are in Cloud delay.
+
+
+# --- 1. THE DATA KILL SWITCH ---
+**.vector-recording = true
+
+# --- 2. OUR 3 CUSTOM VECTORS (The only ones allowed to exist) ---
+**.loRaGW[*].packetForwarder.highQueueLength.vector-recording = true
+**.loRaGW[*].packetForwarder.lowQueueLength.vector-recording = true
+**.networkServer.app[0].delaySignal.vector-recording = true
+
+**.loRaGW[*].packetForwarder.statistic-recording = true
+**.loRaGW[*].packetForwarder.result-recording-modes = all
+
+# --- 3. FLORA SCOREBOARD (Scalars are just 1 KB, perfectly safe) ---
+**.loRaNodes[*].app[0].packetsSent:scalar = true
+**.networkServer.app[0].totalReceivedPackets:scalar = true
+**.loRaGW[*].**.packetDropRate:scalar = true
