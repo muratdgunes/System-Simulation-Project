@@ -1,0 +1,296 @@
+[General]
+network = flora.simulations.LoRaNetworkTest
+output-vector-file = ../results/n100-gw1-s${runnumber}.ini.vec
+**.maxTransmissionDuration = 4s
+**.energyDetection = -110dBm
+
+#cmdenv-autoflush = true
+#cmdenv-status-frequency = 10000000s
+#cmdenv-express-mode = false
+#cmdenv-output-file = cmd_env_log.txt
+
+
+rng-class = "cMersenneTwister"
+**.loRaGW[*].numUdpApps = 1
+**.loRaGW[0].packetForwarder.localPort = 2000
+**.loRaGW[0].packetForwarder.destPort = 1000
+**.loRaGW[0].packetForwarder.destAddresses = "networkServer"
+**.loRaGW[0].packetForwarder.indexNumber = 0
+
+**.networkServer.numApps = 1
+**.networkServer.**.evaluateADRinServer = true
+**.networkServer.app[0].typename = "NetworkServerApp"
+**.networkServer.app[0].destAddresses = "loRaGW[0]"
+**.networkServer.app[0].destPort = 2000
+**.networkServer.app[0].localPort = 1000
+**.networkServer.app[0].adrMethod = ${"avg"}
+
+**.numberOfPacketsToSend = 0 #${numberOfPAckets = 200..5000 step 200} #100 #obviously 0 means infinite number of packets
+sim-time-limit = 3d
+warmup-period = 2h
+simtime-resolution = -11
+repeat = 3  # MAKE IT 20 BECAUSE WE STATED THAT WE WILL DO 20 DIFFERENT ONES.
+
+
+# 2. THE BACKGROUND NOISE (90 Routine Sensors)
+# Nodes 0 through 19 are low priority. 
+# We force them to send a packet every 1 hour, creating air traffic! (50 nodes)
+**.loRaNodes[0..19].app[0].timeToFirstPacket = exponential(1h)
+**.loRaNodes[0..19].app[0].timeToNextPacket = exponential(1h)
+
+**.loRaNodes[20..24].app[0].timeToFirstPacket = exponential(24h)
+**.loRaNodes[20..24].app[0].timeToNextPacket = exponential(24h)
+# 3. THE SATURATED ALARMS (10 High Priority Sensors)
+# Nodes 20 through 39 are high priority alarms.
+# 
+**.loRaNodes[25..39].app[0].timeToFirstPacket = exponential(4h)
+**.loRaNodes[25..39].app[0].timeToNextPacket = exponential(4h)
+
+
+**.alohaChannelModel = false
+
+#nodes features
+**.loRaNodes[*].**.initFromDisplayString = false
+**.loRaNodes[*].**.evaluateADRinNode = true
+**.loRaNodes[*].**initialLoRaBW = 125 kHz
+**.loRaNodes[*].**initialLoRaCR = 4
+**.loRaNodes[*].numApps = 1
+**.loRaNodes[*].app[0].typename = "SimpleLoRaApp"
+
+#gateway features
+**.LoRaGWNic.radio.iAmGateway = true
+**.loRaGW[*].**.initFromDisplayString = false
+
+#power consumption features
+**.loRaNodes[*].LoRaNic.radio.energyConsumer.typename = "LoRaEnergyConsumer"
+**.loRaNodes[*].**.energySourceModule = "^.IdealEpEnergyStorage"
+**.loRaNodes[*].LoRaNic.radio.energyConsumer.configFile = xmldoc("../energyConsumptionParameters.xml")
+
+#general features
+**.sigma = 3.57
+**.constraintAreaMinX = 0m
+**.constraintAreaMinY = 0m
+**.constraintAreaMinZ = 0m
+**.constraintAreaMaxZ = 0m
+
+LoRaNetworkTest.**.radio.separateTransmissionParts = false
+LoRaNetworkTest.**.radio.separateReceptionParts = false
+
+**.ipv4Delayer.config = xmldoc("../cloudDelays.xml")
+**.radio.radioMediumModule = "LoRaMedium"
+**.LoRaMedium.pathLossType = "LoRaLogNormalShadowing"
+#**.LoRaMedium.pathLossType = "LoRaPathLossOulu"
+**.minInterferenceTime = 0s
+**.displayAddresses = false
+
+# cache features
+# **.LoRaMedium.mediumLimitCacheType = "LoRaMediumCache"
+# **.LoRaMedium.rangeFilter = "communicationRange"
+# **.LoRaMedium.neighborCacheType = "LoRaNeighborCache"
+# **.LoRaMedium.neighborCache.range = 546m
+# **.LoRaMedium.neighborCache.refillPeriod = 3000s
+**.numberOfNodes = 40
+**.numberOfGateways = 1
+**.constraintAreaMaxX = 2376.0m
+**.constraintAreaMaxY = 1090.0m
+**.loRaGW[0].**.initialX = 544.00m
+**.loRaGW[0].**.initialY = 544.00m
+output-scalar-file = ../results/n100-gw1-s${runnumber}.ini.sca
+
+
+
+# 2. THE BACKGROUND NOISE (90 Routine Sensors)
+# Nodes 0 through 19 are low priority. 
+# We force them to send a packet every 1 hour, creating massive air traffic!
+**.loRaNodes[0..19].app[0].sendInterval = exponential(1h)
+
+# 3. THE SATURATED ALARMS (10 High Priority Sensors)
+# Nodes 20 through 39 are high priority alarms.
+# They fire every 4 hour and 24 hour. (20-24 smoke alarms, 25-39 door sensors)
+**.loRaNodes[20..24].app[0].sendInterval = exponential(24h)
+**.loRaNodes[25..39].app[0].sendInterval = exponential(4h)
+
+**.loRaNodes[0].**.initialX = 756.75m
+**.loRaNodes[0].**.initialY = 475.93m
+**.loRaNodes[1].**.initialX = 289.82m
+**.loRaNodes[1].**.initialY = 362.58m
+**.loRaNodes[2].**.initialX = 624.29m
+**.loRaNodes[2].**.initialY = 663.75m
+**.loRaNodes[3].**.initialX = 602.66m
+**.loRaNodes[3].**.initialY = 478.45m
+**.loRaNodes[4].**.initialX = 470.31m
+**.loRaNodes[4].**.initialY = 270.77m
+**.loRaNodes[5].**.initialX = 595.43m
+**.loRaNodes[5].**.initialY = 534.16m
+**.loRaNodes[6].**.initialX = 622.07m
+**.loRaNodes[6].**.initialY = 867.74m
+**.loRaNodes[7].**.initialX = 607.24m
+**.loRaNodes[7].**.initialY = 686.21m
+**.loRaNodes[8].**.initialX = 345.10m
+**.loRaNodes[8].**.initialY = 512.81m
+**.loRaNodes[9].**.initialX = 482.55m
+**.loRaNodes[9].**.initialY = 775.88m
+**.loRaNodes[10].**.initialX = 726.69m
+**.loRaNodes[10].**.initialY = 763.41m
+**.loRaNodes[11].**.initialX = 412.27m
+**.loRaNodes[11].**.initialY = 690.86m
+**.loRaNodes[12].**.initialX = 598.04m
+**.loRaNodes[12].**.initialY = 303.50m
+**.loRaNodes[13].**.initialX = 381.55m
+**.loRaNodes[13].**.initialY = 529.43m
+**.loRaNodes[14].**.initialX = 813.05m
+**.loRaNodes[14].**.initialY = 624.83m
+**.loRaNodes[15].**.initialX = 680.24m
+**.loRaNodes[15].**.initialY = 793.76m
+**.loRaNodes[16].**.initialX = 632.33m
+**.loRaNodes[16].**.initialY = 514.61m
+**.loRaNodes[17].**.initialX = 672.67m
+**.loRaNodes[17].**.initialY = 209.20m
+**.loRaNodes[18].**.initialX = 708.69m
+**.loRaNodes[18].**.initialY = 660.01m
+**.loRaNodes[19].**.initialX = 263.17m
+**.loRaNodes[19].**.initialY = 654.88m
+**.loRaNodes[20].**.initialX = 416.55m
+**.loRaNodes[20].**.initialY = 547.86m
+**.loRaNodes[21].**.initialX = 600.99m
+**.loRaNodes[21].**.initialY = 507.49m
+**.loRaNodes[22].**.initialX = 447.01m
+**.loRaNodes[22].**.initialY = 385.67m
+**.loRaNodes[23].**.initialX = 341.83m
+**.loRaNodes[23].**.initialY = 518.37m
+**.loRaNodes[24].**.initialX = 651.41m
+**.loRaNodes[24].**.initialY = 791.59m
+**.loRaNodes[25].**.initialX = 600.52m
+**.loRaNodes[25].**.initialY = 189.07m
+**.loRaNodes[26].**.initialX = 823.31m
+**.loRaNodes[26].**.initialY = 326.86m
+**.loRaNodes[27].**.initialX = 792.91m
+**.loRaNodes[27].**.initialY = 410.96m
+**.loRaNodes[28].**.initialX = 580.15m
+**.loRaNodes[28].**.initialY = 646.39m
+**.loRaNodes[29].**.initialX = 508.62m
+**.loRaNodes[29].**.initialY = 613.09m
+**.loRaNodes[30].**.initialX = 513.57m
+**.loRaNodes[30].**.initialY = 769.51m
+**.loRaNodes[31].**.initialX = 337.46m
+**.loRaNodes[31].**.initialY = 804.29m
+**.loRaNodes[32].**.initialX = 357.46m
+**.loRaNodes[32].**.initialY = 492.72m
+**.loRaNodes[33].**.initialX = 588.14m
+**.loRaNodes[33].**.initialY = 414.28m
+**.loRaNodes[34].**.initialX = 643.32m
+**.loRaNodes[34].**.initialY = 535.80m
+**.loRaNodes[35].**.initialX = 645.58m
+**.loRaNodes[35].**.initialY = 848.24m
+**.loRaNodes[36].**.initialX = 554.84m
+**.loRaNodes[36].**.initialY = 519.14m
+**.loRaNodes[37].**.initialX = 503.64m
+**.loRaNodes[37].**.initialY = 239.79m
+**.loRaNodes[38].**.initialX = 830.48m
+**.loRaNodes[38].**.initialY = 687.81m
+**.loRaNodes[39].**.initialX = 707.13m
+**.loRaNodes[39].**.initialY = 689.41m
+
+
+
+
+**.loRaNodes[0].**initialLoRaSF = 10
+**.loRaNodes[0].**initialLoRaTP = 14dBm
+**.loRaNodes[1].**initialLoRaSF = 12
+**.loRaNodes[1].**initialLoRaTP = 14dBm
+**.loRaNodes[2].**initialLoRaSF = 9
+**.loRaNodes[2].**initialLoRaTP = 14dBm
+**.loRaNodes[3].**initialLoRaSF = 8
+**.loRaNodes[3].**initialLoRaTP = 14dBm
+**.loRaNodes[4].**initialLoRaSF = 11
+**.loRaNodes[4].**initialLoRaTP = 14dBm
+**.loRaNodes[5].**initialLoRaSF = 7
+**.loRaNodes[5].**initialLoRaTP = 11dBm
+**.loRaNodes[6].**initialLoRaSF = 12
+**.loRaNodes[6].**initialLoRaTP = 14dBm
+**.loRaNodes[7].**initialLoRaSF = 9
+**.loRaNodes[7].**initialLoRaTP = 14dBm
+**.loRaNodes[8].**initialLoRaSF = 10
+**.loRaNodes[8].**initialLoRaTP = 14dBm
+**.loRaNodes[9].**initialLoRaSF = 11
+**.loRaNodes[9].**initialLoRaTP = 14dBm
+**.loRaNodes[10].**initialLoRaSF = 11
+**.loRaNodes[10].**initialLoRaTP = 14dBm
+**.loRaNodes[11].**initialLoRaSF = 10
+**.loRaNodes[11].**initialLoRaTP = 14dBm
+**.loRaNodes[12].**initialLoRaSF = 11
+**.loRaNodes[12].**initialLoRaTP = 14dBm
+**.loRaNodes[13].**initialLoRaSF = 9
+**.loRaNodes[13].**initialLoRaTP = 14dBm
+**.loRaNodes[14].**initialLoRaSF = 11
+**.loRaNodes[14].**initialLoRaTP = 14dBm
+**.loRaNodes[15].**initialLoRaSF = 11
+**.loRaNodes[15].**initialLoRaTP = 14dBm
+**.loRaNodes[16].**initialLoRaSF = 8
+**.loRaNodes[16].**initialLoRaTP = 14dBm
+**.loRaNodes[17].**initialLoRaSF = 12
+**.loRaNodes[17].**initialLoRaTP = 14dBm
+**.loRaNodes[18].**initialLoRaSF = 10
+**.loRaNodes[18].**initialLoRaTP = 14dBm
+**.loRaNodes[19].**initialLoRaSF = 12
+**.loRaNodes[19].**initialLoRaTP = 14dBm
+**.loRaNodes[20].**initialLoRaSF = 9
+**.loRaNodes[20].**initialLoRaTP = 14dBm
+**.loRaNodes[21].**initialLoRaSF = 7
+**.loRaNodes[21].**initialLoRaTP = 14dBm
+**.loRaNodes[22].**initialLoRaSF = 10
+**.loRaNodes[22].**initialLoRaTP = 14dBm
+**.loRaNodes[23].**initialLoRaSF = 10
+**.loRaNodes[23].**initialLoRaTP = 14dBm
+**.loRaNodes[24].**initialLoRaSF = 11
+**.loRaNodes[24].**initialLoRaTP = 14dBm
+**.loRaNodes[25].**initialLoRaSF = 12
+**.loRaNodes[25].**initialLoRaTP = 14dBm
+**.loRaNodes[26].**initialLoRaSF = 12
+**.loRaNodes[26].**initialLoRaTP = 14dBm
+**.loRaNodes[27].**initialLoRaSF = 11
+**.loRaNodes[27].**initialLoRaTP = 14dBm
+**.loRaNodes[28].**initialLoRaSF = 8
+**.loRaNodes[28].**initialLoRaTP = 14dBm
+**.loRaNodes[29].**initialLoRaSF = 7
+**.loRaNodes[29].**initialLoRaTP = 14dBm
+**.loRaNodes[30].**initialLoRaSF = 10
+**.loRaNodes[30].**initialLoRaTP = 14dBm
+**.loRaNodes[31].**initialLoRaSF = 12
+**.loRaNodes[31].**initialLoRaTP = 14dBm
+**.loRaNodes[32].**initialLoRaSF = 10
+**.loRaNodes[32].**initialLoRaTP = 14dBm
+**.loRaNodes[33].**initialLoRaSF = 9
+**.loRaNodes[33].**initialLoRaTP = 14dBm
+**.loRaNodes[34].**initialLoRaSF = 8
+**.loRaNodes[34].**initialLoRaTP = 14dBm
+**.loRaNodes[35].**initialLoRaSF = 12
+**.loRaNodes[35].**initialLoRaTP = 14dBm
+**.loRaNodes[36].**initialLoRaSF = 7
+**.loRaNodes[36].**initialLoRaTP = 5dBm
+**.loRaNodes[37].**initialLoRaSF = 12
+**.loRaNodes[37].**initialLoRaTP = 14dBm
+**.loRaNodes[38].**initialLoRaSF = 12
+**.loRaNodes[38].**initialLoRaTP = 14dBm
+**.loRaNodes[39].**initialLoRaSF = 10
+**.loRaNodes[39].**initialLoRaTP = 14dBm
+
+
+
+# 0.09s spike = SF7
+# 0.15s spike = SF8
+# 0.26s spike = SF9 other latencies are in Cloud delay.
+
+
+# --- 1. THE DATA KILL SWITCH ---
+**.vector-recording = true
+
+# --- 2. OUR 3 CUSTOM VECTORS (The only ones allowed to exist) ---
+**.loRaGW[*].packetForwarder.highQueueLength.vector-recording = true
+**.loRaGW[*].packetForwarder.lowQueueLength.vector-recording = true
+**.networkServer.app[0].delaySignal.vector-recording = true
+
+# --- 3. FLORA SCOREBOARD (Scalars are just 1 KB, perfectly safe) ---
+**.loRaNodes[*].app[0].packetsSent:scalar = true
+**.networkServer.app[0].totalReceivedPackets:scalar = true
+**.loRaGW[*].**.packetDropRate:scalar = true
